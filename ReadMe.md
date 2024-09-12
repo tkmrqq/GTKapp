@@ -1,6 +1,10 @@
 # dependencies
-windwos.h
-powrprof.h
+For backend:
+- windwos.h
+- powrprof.h
+
+For frontend:
+- gtk4
 
 # compile and run
 To compile backend:
@@ -13,3 +17,9 @@ Cmd args:
 `--hibernate`
 `--sleep`
 `--add-to-start-up`
+
+To compile frontend
+- `mkdir build`
+- `cd build`
+- `cmake ../build`
+- `cmake --build`
