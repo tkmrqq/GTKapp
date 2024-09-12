@@ -1,0 +1,6 @@
+AC Line Status: Online
+Battery Life Percent: 100%
+Battery power state: High
+Power saving mode: disabled
+System uptime: 0h 35m 6s
+Battery time to full charge: N/A
