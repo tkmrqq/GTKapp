@@ -9,17 +9,8 @@ MyWindow::MyWindow()
     vbox.set_spacing(10);
     set_child(vbox);
 
-    labelAC.set_label("AC Line Status:");
-    labelBtPercent.set_label("Battery Life Percent:");
-    labelBtTime.set_label("Battery Life Time:");
-    labelBtStatus.set_label("Battery Status");
-    labelErr.set_label("");
-
-    vbox.append(labelAC);
-    vbox.append(labelBtPercent);
-    vbox.append(labelBtTime);
-    vbox.append(labelBtStatus);
-    vbox.append(labelErr);
+    label.set_label("");
+    vbox.append(label);
 
     button.set_label("Update!");
     button.signal_clicked().connect(sigc::mem_fun(*this, &MyWindow::on_button_clicked));
@@ -38,32 +29,9 @@ MyWindow::MyWindow()
 
 bool MyWindow::update_labels()
 {
-    std::string status;
-    std::string btFlag;
-    if (GetSystemPowerStatus(&sps))
-    {
-        sps.ACLineStatus == 0 ? (status = "Offline") : (status = "Online");
-        labelAC.set_text("AC Line Status: " + status);
+    std::string btData = getBatteryData();
+    label.set_text(btData);
 
-        labelBtPercent.set_text("Battery Life Percent: " + std::to_string((int)sps.BatteryLifePercent) + '%');
-
-        if (sps.BatteryLifeTime != (DWORD)-1)
-        {
-            int hours = sps.BatteryLifeTime / 3600;
-            int minutes = (sps.BatteryLifeTime % 3600) / 60;
-            labelBtTime.set_text("Battery Life Time: " + std::to_string(hours) + "h " + std::to_string(minutes) + "m");
-        }
-        else
-        {
-            labelBtTime.set_text("Battery Life Time: N/A");
-        }
-        sps.BatteryFlag & 1 ? btFlag = "High" : (sps.BatteryFlag & 2 ? btFlag = "Low" : btFlag = "Unknown");
-        labelBtStatus.set_text("Battery Status: " + btFlag);
-    }
-    else
-    {
-        labelErr.set_text("Error: Unable to retrieve power status");
-    }
     return true;
 }
 
@@ -72,7 +40,21 @@ void MyWindow::on_button_clicked()
     update_labels();
 }
 
-void MyWindow::on_action_file_new()
-{
-    std::cout << "W W W W" << std::endl;
+std::string MyWindow::getBatteryData() {
+    std::string filename = "../bin/battery_log.txt";
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return "";
+    }
+
+    std::string line;
+    std::string batteryData;
+    
+    while (std::getline(file, line)) {
+        batteryData += line + "\n"; // добавляем каждую строку в строку с результатом
+    }
+
+    file.close();
+    return batteryData;
 }

@@ -1,6 +1,9 @@
 #include <gtkmm.h>
 #include <windows.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 class MyWindow : public Gtk::Window
 {
@@ -9,13 +12,13 @@ public:
 
 protected:
     void on_button_clicked();
-    void on_action_file_new();
     bool update_labels();
+    std::string getBatteryData();
 
 private:
     Gtk::Box vbox;
     Gtk::Button button;
-    Gtk::Label labelAC, labelBtPercent, labelBtTime, labelBtStatus, labelErr;
+    Gtk::Label label;
 
     sigc::connection m_timeout_connection;
 
