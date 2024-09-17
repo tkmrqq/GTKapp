@@ -1,14 +1,17 @@
-# dependencies
+# Dependencies
 For backend:
 - windwos.h
 - powrprof.h
+- setupapi.h
 
 For frontend:
 - gtk4
 
-# compile and run
+# Compile and run
 To compile backend:
-`g++ src/backend/battery.cpp src/backend/batteryInfo.cpp  -o bin/battery_app -lpowrprof -Isrc/backend`
+`use CMake`
+>[!NOTE]
+>Use Ninja to build
 
 Start programm:
 `./battery_app`
@@ -23,3 +26,5 @@ To compile frontend
 - `cd build`
 - `cmake ../build`
 - `cmake --build`
+
+use CMake separately for two programs
