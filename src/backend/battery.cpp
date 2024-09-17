@@ -2,10 +2,6 @@
 #include <batteryInfo.hpp>
 
 // variant 1
-// TODO:
-// test add to reg
-// how to cls work in bg
-//
 
 // BatteryFlag
 // 1 - charging
@@ -69,13 +65,13 @@ int main(int argc, char *argv[]) {
         if (arg == "--sleep")
         {
             Sleep(5000);
-            battery.sleepMode();
+            BatteryInfo::sleepMode();
             return 1;
         }
         else if (arg == "--hibernate")
         {
             Sleep(5000);
-            battery.hibernateMode();
+            BatteryInfo::hibernateMode();
             return 1;
         }
         else if (arg == "--add-to-startup") {
@@ -90,7 +86,7 @@ int main(int argc, char *argv[]) {
         }
         else
         {
-            std::cout << "Unknow argument." << std::endl;
+            std::cout << "Unknown argument." << std::endl;
         }
     }
     while (true)

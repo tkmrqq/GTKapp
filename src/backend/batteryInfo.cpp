@@ -23,11 +23,6 @@ std::string getBatteryPowerState(BYTE btFlag)
     return "N/A";
 }
 
-std::string BatteryInfo::getBatteryType()
-{
-    return "N/A";
-}
-
 std::string BatteryInfo::getPowerSource(BYTE acLineStatus)
 {
     if (acLineStatus == 0)
@@ -47,14 +42,14 @@ std::string BatteryInfo::getPowerSavingMode(BYTE systemStatusFlag)
     return (systemStatusFlag == 0) ? "Disabled" : "Enabled";
 }
 
-std::string BatteryInfo::getBatteryLifeRemaining(DWORD batteryLifeTime, bool isCharging)
+std::string BatteryInfo::getBatteryLifeRemaining(DWORD batteryLifeTime)
 {
     if (batteryLifeTime == (DWORD)-1)
     {
         return "N/A";
     }
-    int hours = batteryLifeTime / 3600;
-    int minutes = (batteryLifeTime % 3600) / 60;
+    int hours = (int)batteryLifeTime / 3600;
+    int minutes = (int)(batteryLifeTime % 3600) / 60;
     return std::to_string(hours) + "h " + std::to_string(minutes) + "m";
 }
 
@@ -93,19 +88,25 @@ std::wstring getDeviceName()
   return devicePath;
 }
 
+std::string BatteryInfo::getBatteryType()
+{
+  HANDLE hDevice = CreateFile(reinterpret_cast<LPCSTR>(getDeviceName().c_str()),
+                              GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+  BATTERY_INFORMATION bi;
+  BATTERY_QUERY_INFORMATION bqi;
+  DWORD bytesReturned;
+  bqi.BatteryTag = 0;
+  bqi.InformationLevel = BatteryInformation;
+
+  DeviceIoControl(hDevice, IOCTL_BATTERY_QUERY_TAG, NULL, 0, &bqi.BatteryTag, sizeof(bqi.BatteryTag), &bytesReturned, NULL);
+  DeviceIoControl(hDevice, IOCTL_BATTERY_QUERY_INFORMATION, &bqi, sizeof(bqi), &bi, sizeof(bi), &bytesReturned, NULL);
+  CloseHandle(hDevice);
+
+  return std::string(reinterpret_cast<const char *>(bi.Chemistry), 4);
+}
+
 void BatteryInfo::updateBatteryInfo()
 {
-    HANDLE hDevice = CreateFile(reinterpret_cast<LPCSTR>(getDeviceName().c_str()),
-        GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
-    BATTERY_INFORMATION bi;
-    BATTERY_QUERY_INFORMATION bqi;
-    DWORD bytesReturned;
-    bqi.BatteryTag = 0;
-    bqi.InformationLevel = BatteryInformation;
-
-    DeviceIoControl(hDevice, IOCTL_BATTERY_QUERY_TAG, NULL, 0, &bqi.BatteryTag, sizeof(bqi.BatteryTag), &bytesReturned, NULL);
-    DeviceIoControl(hDevice, IOCTL_BATTERY_QUERY_INFORMATION, &bqi, sizeof(bqi), &bi, sizeof(bi), &bytesReturned, NULL);
-    CloseHandle(hDevice);
     SYSTEM_POWER_STATUS sps;
     if (GetSystemPowerStatus(&sps))
     {
@@ -113,8 +114,8 @@ void BatteryInfo::updateBatteryInfo()
         batteryLifePercent = std::to_string(sps.BatteryLifePercent) + "%";
         batteryPowerState = getBatteryPowerState(sps.BatteryFlag);
         powerSavingMode = getPowerSavingMode(sps.SystemStatusFlag);
-        batteryLifeRemaining = getBatteryLifeRemaining(sps.BatteryLifeTime, sps.ACLineStatus == 1);
-        batteryType = reinterpret_cast<const char*>(bi.Chemistry);
+        batteryLifeRemaining = getBatteryLifeRemaining(sps.BatteryLifeTime);
+        batteryType = getBatteryType();
         getUpTime();
     }
     else

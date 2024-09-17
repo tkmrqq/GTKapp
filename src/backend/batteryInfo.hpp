@@ -25,9 +25,8 @@ public:
     void getUpTime();
     void logBatteryInfo();
 
-    void sleepMode();
-    void hibernateMode();
-    void checkBatteryStatus(SYSTEM_POWER_STATUS sps);
+    static void sleepMode();
+    static void hibernateMode();
 
 private:
     std::string powerSource;
@@ -41,9 +40,9 @@ private:
     int batteryTime = 0;
 
     std::string getPowerSource(BYTE acLineStatus);
-    std::string getBatteryType();
-    std::string getPowerSavingMode(BYTE systemStatusFlag);
-    std::string getBatteryLifeRemaining(DWORD batteryLifeTime, bool isCharging);
+    static std::string getBatteryType();
+    static std::string getPowerSavingMode(BYTE systemStatusFlag);
+    static std::string getBatteryLifeRemaining(DWORD batteryLifeTime);
 };
 
 #endif
