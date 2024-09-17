@@ -9,7 +9,8 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_executable(battery_app
     battery.cpp
-    batteryInfo.hpp
+    batteryInfo.hpp batteryInfo.cpp
 )
 
 target_link_libraries(battery_app PowrProf)
+target_link_libraries(battery_app setupapi)
