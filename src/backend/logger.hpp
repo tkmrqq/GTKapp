@@ -11,8 +11,6 @@ public:
 
     void log(const std::string &message) {
 
-        std::cout << message << std::endl;
-
         std::ofstream file;
         file.open(filename, std::ofstream::out | std::ofstream::trunc);
         if (file.is_open()) {
