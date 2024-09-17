@@ -14,3 +14,7 @@ add_executable(battery_app
 
 target_link_libraries(battery_app PowrProf)
 target_link_libraries(battery_app setupapi)
+
+set(LOG_DIR "${CMAKE_SOURCE_DIR}/bin")
+
+add_definitions(-DLOG_DIR=\"${LOG_DIR}\")

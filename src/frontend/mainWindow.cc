@@ -41,7 +41,7 @@ void MyWindow::on_button_clicked()
 }
 
 std::string MyWindow::getBatteryData() {
-    std::string filename = "../bin/battery_log.txt";
+    std::string filename = LOG_DIR "/battery_log.txt";
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;

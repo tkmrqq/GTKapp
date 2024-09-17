@@ -171,7 +171,7 @@ void BatteryInfo::hibernateMode()
     }
 }
 
-Logger logger("battery_log.txt");
+Logger logger(LOG_DIR "/battery_log.txt");
 
 void BatteryInfo::logBatteryInfo()
 {
