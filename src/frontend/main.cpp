@@ -1,4 +1,3 @@
-#include <iostream>
 #include "mainWindow.cc"
 
 int main(int argc, char *argv[])
@@ -15,6 +14,5 @@ int main(int argc, char *argv[])
 
     Gtk::StyleContext::add_provider_for_display(Gdk::Display::get_default(), css_provider, GTK_STYLE_PROVIDER_PRIORITY_USER);
 
-    // Запуск приложения с использованием указателя на окно
     return app->make_window_and_run<MyWindow>(argc, argv);
 }

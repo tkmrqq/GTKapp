@@ -3,13 +3,19 @@
 MyWindow::MyWindow()
 {
     set_title("Hello GTKmm");
-    set_default_size(800, 400);
+    set_default_size(640, 800);
 
     vbox.set_orientation(Gtk::Orientation::VERTICAL);
     vbox.set_spacing(10);
+    vbox.set_name("body");
     set_child(vbox);
 
+    h1.set_label("Battery Information:");
+    h1.set_name("h1");
+    vbox.append(h1);
+
     label.set_label("");
+    label.set_name("my_label");
     vbox.append(label);
 
     button.set_label("Update!");
@@ -21,10 +27,17 @@ MyWindow::MyWindow()
     m_timeout_connection = Glib::signal_timeout().connect(
         sigc::mem_fun(*this, &MyWindow::update_labels), 1000); // Update every 1000 ms (1 second)
 
-    // CSS
-    m_refCssProvider = Gtk::CssProvider::create();
-    m_refCssProvider->load_from_path("style.css");
-    Gtk::StyleContext::add_provider_for_display(Gdk::Display::get_default(), m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    css_provider = Gtk::CssProvider::create();
+    try{
+      css_provider->load_from_path("C:/GitHub/GTKapp/src/frontend/style.css");
+      std::cout << "CSS load successfully" << std::endl;
+    } catch (const Glib::Error& ex){
+        std::cerr << "Failed to load CSS: " << ex.what() << std::endl;
+    }
+
+    Gtk::StyleContext::add_provider_for_display(Gdk::Display::get_default(),
+                                                css_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
 }
 
 bool MyWindow::update_labels()

@@ -18,10 +18,9 @@ protected:
 private:
     Gtk::Box vbox;
     Gtk::Button button;
-    Gtk::Label label;
+    Gtk::Label label, h1;
 
     sigc::connection m_timeout_connection;
 
-    Glib::RefPtr<Gtk::CssProvider> m_refCssProvider;
-    SYSTEM_POWER_STATUS sps;
+    Glib::RefPtr<Gtk::CssProvider> css_provider;
 };

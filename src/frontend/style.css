@@ -1,13 +1,25 @@
-/* Применяется к кнопке с именем "my_button" */
-#my_button {
-    background-color: #4CAF50;
+*{
+    background: #1c1c1c;
     color: white;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
+    font-size: 24px;
 }
 
-/* Применяется к любым кнопкам */
-button {
-    border: 2px solid #4CAF50;
+#my_button {
+    background: #1c1c1c;
+    padding: 2px;
+    border-radius: 8px;
+    border-color: dodgerblue;
+}
+
+#my_button:hover{
+    border-color: white;
+}
+
+#my_label {
+
+}
+
+#h1 {
+    font-size: 36px;
+    font-weight: bold;
 }
