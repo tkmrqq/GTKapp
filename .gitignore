@@ -1,4 +1,5 @@
 build
 .vscode
-*.exe
+.idea
+**.exe
 cmake-build-debug
