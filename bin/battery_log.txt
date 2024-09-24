@@ -1,6 +1,10 @@
-AC Line Status: Online
-Battery Life Percent: 100%
-Battery power state: High
-Power saving mode: disabled
-System uptime: 0h 35m 6s
-Battery time to full charge: N/A
+Power Source: Battery
+Battery Type: Li-I
+Battery Life Percent: 49%
+Battery Power State: N/A
+Power Saving Mode: Disabled
+Battery health: 83%
+Battery Life Remaining: 7h 28m
+System Uptime: 0h 39m 43s
+Battery work time: 1191
+

@@ -33,14 +33,18 @@ private:
     std::string batteryType;
     std::string batteryLifePercent;
     std::string batteryPowerState;
-    int batteryLevel;
     std::string powerSavingMode;
     std::string batteryLifeRemaining;
     std::string upTime;
+    int designCapacity;
+    int fullChargedCapacity;
+    int btHealth = 0;
+    int batteryLevel;
+
     int batteryTime = 0;
 
     std::string getPowerSource(BYTE acLineStatus);
-    static std::string getBatteryType();
+    std::string getBatteryType();
     static std::string getPowerSavingMode(BYTE systemStatusFlag);
     static std::string getBatteryLifeRemaining(DWORD batteryLifeTime);
 };

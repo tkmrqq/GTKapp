@@ -102,6 +102,10 @@ std::string BatteryInfo::getBatteryType()
   DeviceIoControl(hDevice, IOCTL_BATTERY_QUERY_INFORMATION, &bqi, sizeof(bqi), &bi, sizeof(bi), &bytesReturned, NULL);
   CloseHandle(hDevice);
 
+  designCapacity = int(bi.DesignedCapacity);
+  fullChargedCapacity = int(bi.FullChargedCapacity);
+  btHealth = (fullChargedCapacity * 100) / designCapacity;
+
   return std::string(reinterpret_cast<const char *>(bi.Chemistry), 4);
 }
 
@@ -114,6 +118,7 @@ void BatteryInfo::updateBatteryInfo()
         batteryLifePercent = std::to_string(sps.BatteryLifePercent) + "%";
         batteryPowerState = getBatteryPowerState(sps.BatteryFlag);
         powerSavingMode = getPowerSavingMode(sps.SystemStatusFlag);
+
         batteryLifeRemaining = getBatteryLifeRemaining(sps.BatteryLifeTime);
         batteryType = getBatteryType();
         getUpTime();
@@ -142,6 +147,7 @@ void BatteryInfo::displayBatteryInfo()
     std::cout << "Battery Life Percent: " << batteryLifePercent << std::endl;
     std::cout << "Battery Power State: " << batteryPowerState << std::endl;
     std::cout << "Power Saving Mode: " << powerSavingMode << std::endl;
+    std::cout << "Battery health: " << btHealth << "%" <<std::endl;
     std::cout << "Battery Life Remaining: " << batteryLifeRemaining << std::endl;
     std::cout << "System Uptime: " << upTime << std::endl;
     std::cout << "Battery work time: " << batteryTime << std::endl;
@@ -181,6 +187,7 @@ void BatteryInfo::logBatteryInfo()
     logMsg += ("Battery Life Percent: " + batteryLifePercent + "\n");
     logMsg += ("Battery Power State: " + batteryPowerState + "\n");
     logMsg += ("Power Saving Mode: " + powerSavingMode + "\n");
+    logMsg += ("Battery health: " + std::to_string(btHealth) + "%\n");
     logMsg += ("Battery Life Remaining: " + batteryLifeRemaining + "\n");
     logMsg += ("System Uptime: " + upTime + "\n");
     logMsg += ("Battery work time: " + std::to_string(batteryTime) + "\n");
