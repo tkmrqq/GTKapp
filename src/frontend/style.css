@@ -1,14 +1,14 @@
 *{
-    background: #1c1c1c;
-    color: white;
+    /*background: #1c1c1c;*/
+    /*color: white;*/
     font-size: 24px;
 }
 
 #my_button {
-    background: #1c1c1c;
+    /*background: #1c1c1c;*/
     padding: 2px;
     border-radius: 8px;
-    border-color: dodgerblue;
+    border-color: greenyellow;
 }
 
 #my_button:hover{

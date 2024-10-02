@@ -1,10 +1,10 @@
 Power Source: Battery
 Battery Type: Li-I
-Battery Life Percent: 49%
-Battery Power State: N/A
+Battery Life Percent: 99%
+Battery Power State: High
 Power Saving Mode: Disabled
-Battery health: 83%
-Battery Life Remaining: 7h 28m
-System Uptime: 0h 39m 43s
-Battery work time: 1191
+Battery health: 81%
+Battery Life Remaining: 1h 7m
+System Uptime: 0h 0m 55s
+Battery work time: 2
 

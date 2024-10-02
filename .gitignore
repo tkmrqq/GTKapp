@@ -3,3 +3,6 @@ build
 .idea
 **.exe
 cmake-build-debug
+**.tlog
+**.pdb
+**.vcxproj

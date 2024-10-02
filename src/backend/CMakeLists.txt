@@ -12,6 +12,8 @@ add_executable(battery_app
     batteryInfo.hpp batteryInfo.cpp
 )
 
+add_executable(PCI PCI.cpp)
+
 target_link_libraries(battery_app PowrProf)
 target_link_libraries(battery_app setupapi)
 
