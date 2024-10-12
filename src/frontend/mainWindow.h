@@ -40,11 +40,9 @@ protected:
         ss >> device.bus >> device.device >> device.function
             >> device.vendor_id >> device.device_id;
 
-        // Считываем оставшееся как описание
         std::string description;
         std::getline(ss, description);
 
-        // Разделяем описание на vendorName и deviceName
         size_t pos = description.find('$');
         if (pos != std::string::npos) {
           device.vendorName = description.substr(0, pos);
@@ -59,17 +57,6 @@ protected:
 
       return devices;
     }
-
-    /*std::vector<DeviceData> readDataFromFile(const std::string& filepath) {
-      std::vector<DeviceData> devices;
-
-      // Пример данных (вместо загрузки из файла)
-      devices.push_back({0, 0, 0, 4130, 5680, "Advanced Micro Devices, Inc. [AMD]Renoir/Cezanne Root Complex"});
-      devices.push_back({0, 1, 0, 4130, 5682, "Advanced Micro Devices, Inc. [AMD]Renoir PCIe Dummy Host Bridge"});
-      // Добавьте другие устройства по необходимости
-
-      return devices;
-    }*/
 
 private:
     Gtk::Box vbox;

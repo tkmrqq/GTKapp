@@ -1,7 +1,11 @@
+#include "string"
 #include <cstdio>
 #include <cstring>
-#include <windows.h>
+#include <iostream>
 #include <logger.hpp>
+#include <sstream>
+#include <windows.h>
+#include <iomanip>
 
 #define IOCTL_CODE CTL_CODE(FILE_DEVICE_UNKNOWN, 0x3000, METHOD_BUFFERED, GENERIC_READ | GENERIC_WRITE)
 
@@ -48,49 +52,57 @@ BOOL GetPciDeviceInfo(HANDLE hDevice, ULONG bus, ULONG slot, ULONG func,
 }
 
 // Function to find vendor and device names from pci.ids
-void FindDeviceName(ULONG vendorID, ULONG deviceID, char *vendorName,
-                    char *deviceName) {
-  FILE *file;
-  fopen_s(&file, "C:\\GitHub\\GTKapp\\src\\backend\\pci.ids", "r");
-  if (file == NULL) {
+void FindDeviceName(ULONG vendorID, ULONG deviceID, std::string* vendorName, std::string *deviceName) {
+  std::ifstream file("C:\\GitHub\\GTKapp\\src\\backend\\pci.ids");
+
+  if (!file.is_open()) {
     printf("Error: could not open pci.ids file.\n");
     return;
   }
 
-  char line[512];
-  int foundVendor = 0;
+  std::string line;
 
-  // First pass: find vendor name
-  while (fgets(line, sizeof(line), file)) {
-    ULONG vid;
-    // Check for vendor line
-    if (sscanf_s(line, "%4lX %[^\n]", &vid, vendorName, 512) == 2) {
-      if (vid == vendorID) {
-        foundVendor = 1; // Mark that the vendor has been found
-        break;           // Exit loop as we've found the vendor
+  bool flag = false;
+
+  while (std::getline(file, line)) {
+
+    if(!line.empty() && line[0] == '#') {
+      continue;
+    }
+
+    //find device
+    if (!line.empty() && flag && line[0] == '\t') {
+      std::string dID = line.substr(1, 4);
+      ULONG lineDeviceID;
+      std::stringstream deviceSS;
+      deviceSS << std::hex << dID;
+      deviceSS >> lineDeviceID;
+
+      if (lineDeviceID == deviceID) {
+        *deviceName = line.substr(6);
       }
+      continue;
+    }
+
+    if (flag && (line.empty() || line[0] != '\t')) {
+      flag = false;
+    }
+
+    std::string vID = line.substr(0,4);
+    ULONG lineVendorID;
+    std::stringstream ss;
+    ss << std::hex << vID;
+    ss >> lineVendorID;
+
+    //find vendor
+    if (lineVendorID == vendorID) {
+      *vendorName = line.substr(5);
+      flag = true;
     }
   }
 
-  // If vendor found, proceed to find device name
-  if (foundVendor) {
-    // Rewind file to search for device ID
-    rewind(file);
-
-    while (fgets(line, sizeof(line), file)) {
-      ULONG did;
-      // Check for device line
-      if (sscanf_s(line, " %4lX %[^\n]", &did, deviceName, 512) == 2) {
-        if (did == deviceID) {
-          // Found the device name for the matched device ID
-          break; // Exit loop since we've found both names
-        }
-      }
-    }
-  }
-
-  fclose(file);
 }
+
 
 int main() {
   // Open the driver
@@ -105,43 +117,46 @@ int main() {
   }
 
   // Print table header for device information
-  printf("| %-4s | %-4s | %-9s | %-11s | %-11s | %-40s | %-60s |\n", "Bus",
+  printf("%s|%-4s|%4s|%-9s|%-9s| %-40s | %-60s\n", "Bus",
          "Slot", "Func", "Vendor ID", "Device ID", "Vendor Name",
          "Device Name");
-  std::string logMsg;
-  // Iterate through all possible devices on the PCI bus
+  std::ostringstream logStream;
   for (ULONG bus = 0; bus < 256; bus++) {
     for (ULONG slot = 0; slot < 32; slot++) {
       for (ULONG func = 0; func < 8; func++) {
         ULONG vendorID = 0xFFFF, deviceID = 0xFFFF;
 
-        // Request information from the driver
         if (GetPciDeviceInfo(hDevice, bus, slot, func, &vendorID, &deviceID)) {
-          // If device is found
           if (vendorID != 0xFFFF && deviceID != 0xFFFF) {
-            // Variables to store names
-            char vendorName[512] = "Not found";
-            char deviceName[512] = "Not found";
+            std::string vendorName = "Not found";
+            std::string deviceName = "Not found";
 
-            // Find and print the device name
-            FindDeviceName(vendorID, deviceID, vendorName, deviceName);
+            FindDeviceName(vendorID, deviceID, &vendorName, &deviceName);
 
-            // Print device information in columns
-            printf("| %-4lu | %-4lu | %-9lu | %04lX        | %04lX        | "
-                   "%-40.39s | %-60.59s |\n",
-                   bus, slot, func, vendorID, deviceID, vendorName, deviceName);
-            logMsg += std::to_string(bus) + " ";
-            logMsg += std::to_string(slot) + " ";
-            logMsg += std::to_string(func) + " ";
-            logMsg += std::to_string(vendorID) + " ";
-            logMsg += std::to_string(deviceID) + " ";
-            logMsg += vendorName;
-            logMsg += deviceName;
-            logMsg += "\n";
+            std::cout << std::setw(2) << bus << " | "
+                      << std::setw(2) << slot << " | "
+                      << std::setw(2) << func << " | "
+                      << std::setw(7) << vendorID << " | "
+                      << std::setw(7) << deviceID << " | "
+                      << std::setw(40) << vendorName << " | "
+                      << std::setw(60) << deviceName << std::endl;
+
+            logStream << bus << " "
+                      << slot << " "
+                      << func << " "
+                      << vendorID << " "
+                      << deviceID << " "
+                      << vendorName << "$"
+                      << deviceName << "\n";
           }
         }
       }
     }
+  }
+  std::string logMsg = logStream.str();
+
+  if (!logMsg.empty() && logMsg.back() == '\n') {
+    logMsg.pop_back();
   }
   logger.log(logMsg);
 

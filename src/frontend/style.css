@@ -1,7 +1,7 @@
 *{
     /*background: #1c1c1c;*/
     /*color: white;*/
-    font-size: 32px;
+    font-size: 16px;
 }
 
 #my_button {
@@ -20,6 +20,6 @@
 }
 
 #h1 {
-    font-size: 36px;
+    font-size: 18px;
     font-weight: bold;
 }
