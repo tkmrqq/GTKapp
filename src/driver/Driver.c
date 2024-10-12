@@ -12,9 +12,9 @@ struct DeviceRequest
 
 struct DeviceResponse
 {
-    ULONG result1;
-    ULONG result2;
-    ULONG result3;
+    ULONG vendor;
+    ULONG device;
+    ULONG func;
 };
 
 ULONG ReadPciConfig(ULONG bus, ULONG slot, ULONG func, ULONG offset)
@@ -92,9 +92,9 @@ VOID HandleIOCTL(
         ULONG deviceID = (ULONG)((configData >> 16) & 0xFFFF);
         ULONG func = request_data->c;
 
-        response_data->result1 = vendorID;
-        response_data->result2 = deviceID;
-        response_data->result3 = func;
+        response_data->vendor = vendorID;
+        response_data->device = deviceID;
+        response_data->func = func;
         returnBytes = sizeof(struct DeviceResponse);
         break;
     }
