@@ -61,14 +61,36 @@ void MyWindow::create_device_table_tab() {
   device_view = Gtk::make_managed<Gtk::TreeView>();
 
   list_store = Gtk::ListStore::create(columns);
-  device_view->set_model(list_store);
+  sort_model = Gtk::TreeModelSort::create(list_store);
+  device_view->set_model(sort_model);
 
-  device_view->append_column("Bus", columns.col_bus);
-  device_view->append_column("Device", columns.col_device);
-  device_view->append_column("Function", columns.col_function);
-  device_view->append_column("Vendor ID", columns.col_vendor_id);
-  device_view->append_column("Device ID", columns.col_device_id);
-  device_view->append_column("Vendor Name/Device Name", columns.col_description);
+  auto bus_column = Gtk::make_managed<Gtk::TreeViewColumn>("Bus", columns.col_bus);
+  bus_column->set_sort_column(columns.col_bus);
+  device_view->append_column(*bus_column);
+
+  auto device_column = Gtk::make_managed<Gtk::TreeViewColumn>("Device", columns.col_device);
+  device_column->set_sort_column(columns.col_device);
+  device_view->append_column(*device_column);
+
+  auto function_column = Gtk::make_managed<Gtk::TreeViewColumn>("Function", columns.col_function);
+  function_column->set_sort_column(columns.col_function);
+  device_view->append_column(*function_column);
+
+  auto vendor_id_column = Gtk::make_managed<Gtk::TreeViewColumn>("Vendor ID", columns.col_vendor_id);
+  vendor_id_column->set_sort_column(columns.col_vendor_id);
+  device_view->append_column(*vendor_id_column);
+
+  auto device_id_column = Gtk::make_managed<Gtk::TreeViewColumn>("Device ID", columns.col_device_id);
+  device_id_column->set_sort_column(columns.col_device_id);
+  device_view->append_column(*device_id_column);
+
+  auto vendor_name_column = Gtk::make_managed<Gtk::TreeViewColumn>("Vendor Name", columns.col_vendorName);
+  vendor_name_column->set_sort_column(columns.col_vendorName);
+  device_view->append_column(*vendor_name_column);
+
+  auto device_name_column = Gtk::make_managed<Gtk::TreeViewColumn>("Device Name", columns.col_deviceName);
+  device_name_column->set_sort_column(columns.col_deviceName);
+  device_view->append_column(*device_name_column);
 
   auto scrolled_window = Gtk::make_managed<Gtk::ScrolledWindow>();
   scrolled_window->set_policy(Gtk::PolicyType::AUTOMATIC, Gtk::PolicyType::AUTOMATIC); // Прокрутка по обеим осям
@@ -94,7 +116,8 @@ void MyWindow::load_device_data()
     row[columns.col_function] = device.function;
     row[columns.col_vendor_id] = device.vendor_id;
     row[columns.col_device_id] = device.device_id;
-    row[columns.col_description] = device.description;
+    row[columns.col_vendorName] = device.vendorName;
+    row[columns.col_deviceName] = device.deviceName;
   }
 }
 

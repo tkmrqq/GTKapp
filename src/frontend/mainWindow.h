@@ -25,7 +25,8 @@ protected:
       int function;
       int vendor_id;
       int device_id;
-      std::string description;
+      std::string vendorName;
+      std::string deviceName;
     };
 
     std::vector<DeviceData> readDataFromFile(const std::string& filename) {
@@ -38,7 +39,21 @@ protected:
         DeviceData device;
         ss >> device.bus >> device.device >> device.function
             >> device.vendor_id >> device.device_id;
-        std::getline(ss, device.description); // Считываем оставшееся как описание
+
+        // Считываем оставшееся как описание
+        std::string description;
+        std::getline(ss, description);
+
+        // Разделяем описание на vendorName и deviceName
+        size_t pos = description.find('$');
+        if (pos != std::string::npos) {
+          device.vendorName = description.substr(0, pos);
+          device.deviceName = description.substr(pos + 1);
+        } else {
+          device.vendorName = description;
+          device.deviceName = "";
+        }
+
         devices.push_back(device);
       }
 
@@ -66,6 +81,7 @@ private:
     Gtk::Notebook* notebook;
     Gtk::TreeView* device_view;
     Glib::RefPtr<Gtk::ListStore> list_store;
+    Glib::RefPtr<Gtk::TreeModelSort> sort_model;
 
     class ModelColumns : public Gtk::TreeModel::ColumnRecord {
     public:
@@ -75,7 +91,8 @@ private:
         add(col_function);
         add(col_vendor_id);
         add(col_device_id);
-        add(col_description);
+        add(col_vendorName);
+        add(col_deviceName);
       }
 
       Gtk::TreeModelColumn<int> col_bus;
@@ -83,12 +100,11 @@ private:
       Gtk::TreeModelColumn<int> col_function;
       Gtk::TreeModelColumn<int> col_vendor_id;
       Gtk::TreeModelColumn<int> col_device_id;
-      Gtk::TreeModelColumn<std::string> col_description;
+      Gtk::TreeModelColumn<std::string> col_vendorName;
+      Gtk::TreeModelColumn<std::string> col_deviceName;
     };
 
     ModelColumns columns;
 
     sigc::connection m_timeout_connection;
-
-
 };
